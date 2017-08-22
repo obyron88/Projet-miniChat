@@ -1,12 +1,14 @@
 <?php
 // Connexion à la base de données
 /* TODO */
+include("connect.php");
+
 
 if ($_POST) {
     // Insertion du message à l'aide d'une requête préparée
     /* TODO */
 }
-
+$pseudocookie = $_COOKIE['pseudo'];
 ?>
 <!DOCTYPE>
 <html>
@@ -27,11 +29,25 @@ if ($_POST) {
                 <ul class="demo-list-item mdl-list" id="conversation">
 <?php
 // Récupération des 10 derniers messages
-/* TODO */
+$reponse2 = $pdo->query('SELECT pseudo, message FROM chat ORDER BY ID DESC LIMIT 0, 10');
 
 // Affichage de chaque message (toutes les données sont protégées par htmlspecialchars)
-/* TODO */
-// while (...) {
+
+$reponse3 = $reponse2->fetchAll();
+// var_dump($reponse1);
+foreach ($reponse3 as $value) {
+    echo '<p><strong>'.htmlspecialchars($value->pseudo).'</strong>: '.htmlspecialchars($value->message).'</p>';
+}
+
+//
+//while ($donnees = $reponse->fetch())
+//
+//{
+//    echo '<p><strong>' . htmlspecialchars($donnees['pseudo']) . '</strong> : ' . htmlspecialchars($donnees['message']) . '</p>';
+//}
+
+
+//$reponse->closeCursor();
 ?>
                     <li class="mdl-list__item">
                         <span class="mdl-list__item-primary-content">
@@ -44,9 +60,9 @@ if ($_POST) {
 ?>
                 </ul>
 
-                <form action="#" class="mdl-grid" method="POST">
+                <form action="post.php" class="mdl-grid" method="POST">
                     <div class="mdl-cell mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                        <input class="mdl-textfield__input" type="text" name="pseudo" id="pseudo">
+                        <input class="mdl-textfield__input" type="text" name="pseudo" id="pseudo" value="<?php echo $pseudocookie; ?>">
                         <label class="mdl-textfield__label" for="sample3">Pseudo</label>
                     </div>
                     <div class="mdl-cell mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -63,6 +79,12 @@ if ($_POST) {
 
     <!-- Scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+    <script language="javascript">
+        setTimeout(function(){
+            window.location.reload(1);
+        }, 30000);
+
+    </script>
     <!-- Material Design Light -->
     <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
 </body>
