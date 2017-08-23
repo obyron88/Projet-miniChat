@@ -1,13 +1,7 @@
 <?php
 // Connexion à la base de données
-/* TODO */
 include("connect.php");
 
-
-if ($_POST) {
-    // Insertion du message à l'aide d'une requête préparée
-    /* TODO */
-}
 $pseudocookie = $_COOKIE['pseudo'];
 ?>
 <!DOCTYPE>
@@ -28,30 +22,53 @@ $pseudocookie = $_COOKIE['pseudo'];
             <div class="page-content">
                 <ul class="demo-list-item mdl-list" id="conversation">
 <?php
+
+$retour = $pdo->query('SELECT COUNT(*) AS nbmessage FROM chat');
+
+$retour2 = $retour->fetchAll();
+
+foreach ($retour2 as $value) {
+
+    echo '<p>Nombre de messages : '.$value->nbmessage.'</p>';
+}
+$nombreMessages = $value->nbmessage;
+$nombreDeMessagesParPage = 10;
+$nombreDePages = ceil($nombreMessages / $nombreDeMessagesParPage);
+echo 'Page : ';
+for ($i = 1 ; $i <= $nombreDePages ; $i++)
+{
+    echo '<a href="index.php?page=' . $i . '"><button>' . $i . '</button></a> ';
+}
+if (isset($_GET['page']))
+{
+    $page = $_GET['page']; // On récupère le numéro de la page indiqué dans l'adresse
+}
+else // La variable n'existe pas, c'est la première fois qu'on charge la page
+{
+    $page = 1; // On se met sur la page 1 (par défaut)
+}
+// On calcule le numéro du premier message qu'on prend pour le LIMIT de MySQL
+$premierMessageAafficher = ($page - 1) * $nombreDeMessagesParPage;
+
 // Récupération des 10 derniers messages
-$reponse2 = $pdo->query('SELECT pseudo, message FROM chat ORDER BY ID DESC LIMIT 0, 10');
+$reponse2 = $pdo->query('SELECT pseudo, message FROM chat ORDER BY ID DESC LIMIT ' . $premierMessageAafficher . ', ' . $nombreDeMessagesParPage);
 
 // Affichage de chaque message (toutes les données sont protégées par htmlspecialchars)
 
 $reponse3 = $reponse2->fetchAll();
-// var_dump($reponse1);
+
 foreach ($reponse3 as $value) {
-    echo '<p><strong>'.htmlspecialchars($value->pseudo).'</strong>: '.htmlspecialchars($value->message).'</p>';
+
+    $value->message = str_replace(':smile_cat:','<img style="width: 30px; height: 30px" src="smile_cat.png"/>', $value->message);
+
+    echo '<p><strong>'.htmlspecialchars($value->pseudo).'</strong>: '.$value->message.'</p>';
 }
-
-//
-//while ($donnees = $reponse->fetch())
-//
-//{
-//    echo '<p><strong>' . htmlspecialchars($donnees['pseudo']) . '</strong> : ' . htmlspecialchars($donnees['message']) . '</p>';
-//}
-
-
-//$reponse->closeCursor();
 ?>
+
+
                     <li class="mdl-list__item">
                         <span class="mdl-list__item-primary-content">
-                            <strong><?php /* TODO */ ?></strong>: <?php /* TODO */ ?>
+                            <strong><?php /* TODO */ ?></strong> <?php /* TODO */ ?>
                         </span>
                     </li>
 <?php
